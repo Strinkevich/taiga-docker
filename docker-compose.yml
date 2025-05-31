@@ -142,9 +142,7 @@ services:
       - MAX_AGE=${ATTACHMENTS_MAX_AGE:-360}
       - SECRET_KEY=${SECRET_KEY:-taiga-secret}
     networks:
-      taiga: {}
-      coolify:
-        external: true
+      - taiga
 
   taiga-gateway:
     image: nginx:1.19-alpine
@@ -169,3 +167,11 @@ services:
 volumes:
   taiga-static-data:
   taiga-media-data:
+  taiga-db-data:
+  taiga-async-rabbitmq-data:
+  taiga-events-rabbitmq-data:
+
+networks:
+  taiga: {}
+  coolify:
+    external: true
