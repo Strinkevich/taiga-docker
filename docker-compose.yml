@@ -110,6 +110,13 @@ services:
       - TAIGA_SUBPATH=${SUBPATH:-}
     networks:
       - taiga
+      - coolify
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.taiga.rule=Host(`${TAIGA_DOMAIN}`)"
+      - "traefik.http.routers.taiga.entrypoints=websecure"
+      - "traefik.http.routers.taiga.tls=true"
+      - "traefik.http.services.taiga.loadbalancer.server.port=80"
 
   taiga-events:
     image: taigaio/taiga-events:latest
@@ -143,26 +150,6 @@ services:
       - SECRET_KEY=${SECRET_KEY:-taiga-secret}
     networks:
       - taiga
-
-  taiga-gateway:
-    image: nginx:1.19-alpine
-    volumes:
-      - ./taiga-gateway/taiga.conf:/etc/nginx/conf.d/default.conf
-      - taiga-static-data:/taiga/static
-      - taiga-media-data:/taiga/media
-    networks:
-      - taiga
-      - coolify
-    depends_on:
-      - taiga-front
-      - taiga-back
-      - taiga-events
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.taiga.rule=Host(`${TAIGA_DOMAIN}`)"
-      - "traefik.http.routers.taiga.entrypoints=websecure"
-      - "traefik.http.routers.taiga.tls=true"
-      - "traefik.http.services.taiga.loadbalancer.server.port=80"
 
 volumes:
   taiga-static-data:
