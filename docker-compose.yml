@@ -4,11 +4,11 @@ services:
   taiga-db:
     image: postgres:12.3
     environment:
-      POSTGRES_DB: "taiga"
-      POSTGRES_USER: "${POSTGRES_USER}"
-      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      - POSTGRES_DB=taiga
+      - POSTGRES_USER=${POSTGRES_USER:-taiga}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-taiga}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-taiga}"]
       interval: 2s
       timeout: 15s
       retries: 5
@@ -21,25 +21,25 @@ services:
   taiga-back:
     image: taigaio/taiga-back:latest
     environment:
-      POSTGRES_DB: "taiga"
-      POSTGRES_USER: "${POSTGRES_USER}"
-      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
-      POSTGRES_HOST: "taiga-db"
-      TAIGA_SECRET_KEY: "${SECRET_KEY}"
-      TAIGA_SITES_SCHEME: "${TAIGA_SCHEME}"
-      TAIGA_SITES_DOMAIN: "${TAIGA_DOMAIN}"
-      TAIGA_SUBPATH: "${SUBPATH}"
-      EMAIL_BACKEND: "django.core.mail.backends.${EMAIL_BACKEND}.EmailBackend"
-      DEFAULT_FROM_EMAIL: "${EMAIL_DEFAULT_FROM}"
-      EMAIL_USE_TLS: "${EMAIL_USE_TLS}"
-      EMAIL_USE_SSL: "${EMAIL_USE_SSL}"
-      EMAIL_HOST: "${EMAIL_HOST}"
-      EMAIL_PORT: "${EMAIL_PORT}"
-      EMAIL_HOST_USER: "${EMAIL_HOST_USER}"
-      EMAIL_HOST_PASSWORD: "${EMAIL_HOST_PASSWORD}"
-      RABBITMQ_USER: "${RABBITMQ_USER}"
-      RABBITMQ_PASS: "${RABBITMQ_PASS}"
-      ENABLE_TELEMETRY: "${ENABLE_TELEMETRY}"
+      - POSTGRES_DB=taiga
+      - POSTGRES_USER=${POSTGRES_USER:-taiga}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-taiga}
+      - POSTGRES_HOST=taiga-db
+      - TAIGA_SECRET_KEY=${SECRET_KEY:-taiga-secret}
+      - TAIGA_SITES_SCHEME=${TAIGA_SCHEME:-https}
+      - TAIGA_SITES_DOMAIN=${TAIGA_DOMAIN}
+      - TAIGA_SUBPATH=${SUBPATH:-}
+      - EMAIL_BACKEND=django.core.mail.backends.${EMAIL_BACKEND:-console}.EmailBackend
+      - DEFAULT_FROM_EMAIL=${EMAIL_DEFAULT_FROM:-changeme@example.com}
+      - EMAIL_USE_TLS=${EMAIL_USE_TLS:-True}
+      - EMAIL_USE_SSL=${EMAIL_USE_SSL:-False}
+      - EMAIL_HOST=${EMAIL_HOST:-smtp.host.example.com}
+      - EMAIL_PORT=${EMAIL_PORT:-587}
+      - EMAIL_HOST_USER=${EMAIL_HOST_USER:-user}
+      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD:-password}
+      - RABBITMQ_USER=${RABBITMQ_USER:-taiga}
+      - RABBITMQ_PASS=${RABBITMQ_PASS:-taiga}
+      - ENABLE_TELEMETRY=${ENABLE_TELEMETRY:-True}
     volumes:
       - taiga-static-data:/taiga-back/static
       - taiga-media-data:/taiga-back/media
@@ -57,25 +57,25 @@ services:
     image: taigaio/taiga-back:latest
     entrypoint: ["/taiga-back/docker/async_entrypoint.sh"]
     environment:
-      POSTGRES_DB: "taiga"
-      POSTGRES_USER: "${POSTGRES_USER}"
-      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
-      POSTGRES_HOST: "taiga-db"
-      TAIGA_SECRET_KEY: "${SECRET_KEY}"
-      TAIGA_SITES_SCHEME: "${TAIGA_SCHEME}"
-      TAIGA_SITES_DOMAIN: "${TAIGA_DOMAIN}"
-      TAIGA_SUBPATH: "${SUBPATH}"
-      EMAIL_BACKEND: "django.core.mail.backends.${EMAIL_BACKEND}.EmailBackend"
-      DEFAULT_FROM_EMAIL: "${EMAIL_DEFAULT_FROM}"
-      EMAIL_USE_TLS: "${EMAIL_USE_TLS}"
-      EMAIL_USE_SSL: "${EMAIL_USE_SSL}"
-      EMAIL_HOST: "${EMAIL_HOST}"
-      EMAIL_PORT: "${EMAIL_PORT}"
-      EMAIL_HOST_USER: "${EMAIL_HOST_USER}"
-      EMAIL_HOST_PASSWORD: "${EMAIL_HOST_PASSWORD}"
-      RABBITMQ_USER: "${RABBITMQ_USER}"
-      RABBITMQ_PASS: "${RABBITMQ_PASS}"
-      ENABLE_TELEMETRY: "${ENABLE_TELEMETRY}"
+      - POSTGRES_DB=taiga
+      - POSTGRES_USER=${POSTGRES_USER:-taiga}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-taiga}
+      - POSTGRES_HOST=taiga-db
+      - TAIGA_SECRET_KEY=${SECRET_KEY:-taiga-secret}
+      - TAIGA_SITES_SCHEME=${TAIGA_SCHEME:-https}
+      - TAIGA_SITES_DOMAIN=${TAIGA_DOMAIN}
+      - TAIGA_SUBPATH=${SUBPATH:-}
+      - EMAIL_BACKEND=django.core.mail.backends.${EMAIL_BACKEND:-console}.EmailBackend
+      - DEFAULT_FROM_EMAIL=${EMAIL_DEFAULT_FROM:-changeme@example.com}
+      - EMAIL_USE_TLS=${EMAIL_USE_TLS:-True}
+      - EMAIL_USE_SSL=${EMAIL_USE_SSL:-False}
+      - EMAIL_HOST=${EMAIL_HOST:-smtp.host.example.com}
+      - EMAIL_PORT=${EMAIL_PORT:-587}
+      - EMAIL_HOST_USER=${EMAIL_HOST_USER:-user}
+      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD:-password}
+      - RABBITMQ_USER=${RABBITMQ_USER:-taiga}
+      - RABBITMQ_PASS=${RABBITMQ_PASS:-taiga}
+      - ENABLE_TELEMETRY=${ENABLE_TELEMETRY:-True}
     volumes:
       - taiga-static-data:/taiga-back/static
       - taiga-media-data:/taiga-back/media
@@ -92,11 +92,11 @@ services:
   taiga-async-rabbitmq:
     image: rabbitmq:3.8-management-alpine
     environment:
-      RABBITMQ_ERLANG_COOKIE: "${RABBITMQ_ERLANG_COOKIE}"
-      RABBITMQ_DEFAULT_USER: "${RABBITMQ_USER}"
-      RABBITMQ_DEFAULT_PASS: "${RABBITMQ_PASS}"
-      RABBITMQ_DEFAULT_VHOST: "${RABBITMQ_VHOST}"
-    hostname: "taiga-async-rabbitmq"
+      - RABBITMQ_ERLANG_COOKIE=${RABBITMQ_ERLANG_COOKIE:-secret-erlang-cookie}
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER:-taiga}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASS:-taiga}
+      - RABBITMQ_DEFAULT_VHOST=${RABBITMQ_VHOST:-taiga}
+    hostname: taiga-async-rabbitmq
     volumes:
       - taiga-async-rabbitmq-data:/var/lib/rabbitmq
     networks:
@@ -105,18 +105,18 @@ services:
   taiga-front:
     image: taigaio/taiga-front:latest
     environment:
-      TAIGA_URL: "${TAIGA_SCHEME}://${TAIGA_DOMAIN}"
-      TAIGA_WEBSOCKETS_URL: "${WEBSOCKETS_SCHEME}://${TAIGA_DOMAIN}"
-      TAIGA_SUBPATH: "${SUBPATH}"
+      - TAIGA_URL=${TAIGA_SCHEME:-https}://${TAIGA_DOMAIN}
+      - TAIGA_WEBSOCKETS_URL=${WEBSOCKETS_SCHEME:-wss}://${TAIGA_DOMAIN}
+      - TAIGA_SUBPATH=${SUBPATH:-}
     networks:
       - taiga
 
   taiga-events:
     image: taigaio/taiga-events:latest
     environment:
-      RABBITMQ_USER: "${RABBITMQ_USER}"
-      RABBITMQ_PASS: "${RABBITMQ_PASS}"
-      TAIGA_SECRET_KEY: "${SECRET_KEY}"
+      - RABBITMQ_USER=${RABBITMQ_USER:-taiga}
+      - RABBITMQ_PASS=${RABBITMQ_PASS:-taiga}
+      - TAIGA_SECRET_KEY=${SECRET_KEY:-taiga-secret}
     networks:
       - taiga
     depends_on:
@@ -126,11 +126,11 @@ services:
   taiga-events-rabbitmq:
     image: rabbitmq:3.8-management-alpine
     environment:
-      RABBITMQ_ERLANG_COOKIE: "${RABBITMQ_ERLANG_COOKIE}"
-      RABBITMQ_DEFAULT_USER: "${RABBITMQ_USER}"
-      RABBITMQ_DEFAULT_PASS: "${RABBITMQ_PASS}"
-      RABBITMQ_DEFAULT_VHOST: "${RABBITMQ_VHOST}"
-    hostname: "taiga-events-rabbitmq"
+      - RABBITMQ_ERLANG_COOKIE=${RABBITMQ_ERLANG_COOKIE:-secret-erlang-cookie}
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER:-taiga}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASS:-taiga}
+      - RABBITMQ_DEFAULT_VHOST=${RABBITMQ_VHOST:-taiga}
+    hostname: taiga-events-rabbitmq
     volumes:
       - taiga-events-rabbitmq-data:/var/lib/rabbitmq
     networks:
@@ -139,8 +139,8 @@ services:
   taiga-protected:
     image: taigaio/taiga-protected:latest
     environment:
-      MAX_AGE: "${ATTACHMENTS_MAX_AGE}"
-      SECRET_KEY: "${SECRET_KEY}"
+      - MAX_AGE=${ATTACHMENTS_MAX_AGE:-360}
+      - SECRET_KEY=${SECRET_KEY:-taiga-secret}
     networks:
       - taiga
 
@@ -167,11 +167,3 @@ services:
 volumes:
   taiga-static-data:
   taiga-media-data:
-  taiga-db-data:
-  taiga-async-rabbitmq-data:
-  taiga-events-rabbitmq-data:
-
-networks:
-  taiga:
-  coolify:
-    external: true
