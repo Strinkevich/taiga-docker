@@ -142,7 +142,9 @@ services:
       - MAX_AGE=${ATTACHMENTS_MAX_AGE:-360}
       - SECRET_KEY=${SECRET_KEY:-taiga-secret}
     networks:
-      - taiga
+      taiga: {}
+      coolify:
+        external: true
 
   taiga-gateway:
     image: nginx:1.19-alpine
